@@ -12,10 +12,12 @@ function App() {
 	});
 
 	return (
-		<div className="flex divide-y">
+		<div className="flex divide-x">
 			{columns.map((column) => (
 				<div>
-					<h1>{column.title}</h1>
+					<h2 className="text-3xl p-2 capitalize font-bold">
+						{column.title}
+					</h2>
 					{column.tasks.map((task) => (
 						<TaskCard task={task} />
 					))}
