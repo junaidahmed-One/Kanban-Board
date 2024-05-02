@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Task } from "../Types/data-tasks";
 
 const lowPriorityIcon = (
@@ -55,7 +56,14 @@ const highPriorityIcon = (
 	</svg>
 );
 
-export const TaskCard = ({ task }: { task: Task }) => {
+export const TaskCard = ({
+	task,
+	updateTaskPoints,
+}: {
+	task: Task;
+	updateTaskPoints: (task: Task, points: number) => void;
+}) => {
+	const points = task.points || 0;
 	return (
 		<div className="border rounded-lg px-2 m-2 bg-gray-50 w-56">
 			<div className="text-base font-base py-2">{task.title}</div>
@@ -66,7 +74,15 @@ export const TaskCard = ({ task }: { task: Task }) => {
 					{task.priority === "medium" && mediumPriorityIcon}
 					{task.priority === "low" && lowPriorityIcon}
 				</div>
-				<div>{task.points}</div>
+				<div className="flex gap-2 items-center">
+					<button onClick={() => updateTaskPoints(task, points - 1)}>
+						-
+					</button>
+					<div className="font-bold">{points}</div>
+					<button onClick={() => updateTaskPoints(task, points + 1)}>
+						+
+					</button>
+				</div>
 			</div>
 		</div>
 	);
