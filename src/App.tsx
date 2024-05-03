@@ -1,7 +1,12 @@
 import { useState } from "react";
 import "./App.css";
 import { TaskCard } from "./Components/TaskCard";
-import { tasks as initialTasks, statuses, Task } from "./Types/data-tasks";
+import {
+	tasks as initialTasks,
+	Status,
+	statuses,
+	Task,
+} from "./Types/data-tasks";
 
 function App() {
 	const [tasks, setTasks] = useState<Task[]>(initialTasks);
@@ -13,30 +18,29 @@ function App() {
 		};
 	});
 
-	const updateTaskPoints = (task: Task, points: number) => {
+	const updateTask = (task: Task) => {
 		const updatedTasks = tasks.map((t) => {
-			if (t.id === task.id) {
-				return {
-					...t,
-					points,
-				};
-			}
-			return t;
+			return t.id === task.id ? task : t;
 		});
 		setTasks(updatedTasks);
 	};
 
-	const updateTaskTitle = (task: Task, title: string) => {
-		const updatedTasks = tasks.map((t) => {
-			return t.id === task.id ? { ...t, title } : t;
-		});
-		setTasks(updatedTasks);
+	const handleDrop = (e: React.DragEvent<HTMLDivElement>, status: Status) => {
+		e.preventDefault();
+		const id = e.dataTransfer.getData("id");
+		const task = tasks.find((task) => task.id === id);
+		if (task) {
+			updateTask({ ...task, status });
+		}
 	};
 
 	return (
 		<div className="flex divide-x">
 			{columns.map((column) => (
-				<div>
+				<div
+					onDrop={(e) => handleDrop(e, column.title)}
+					onDragOver={(e) => e.preventDefault()}
+				>
 					<div className="flex justify-between text-3xl p-2 font-bold">
 						<h2 className="capitalize">{column.title}</h2>
 						{column.tasks.reduce(
@@ -45,11 +49,7 @@ function App() {
 						)}
 					</div>
 					{column.tasks.map((task) => (
-						<TaskCard
-							task={task}
-							updateTaskPoints={updateTaskPoints}
-							updateTaskTitle={updateTaskTitle}
-						/>
+						<TaskCard task={task} updateTask={updateTask} />
 					))}
 				</div>
 			))}
